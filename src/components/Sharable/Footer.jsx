@@ -2,13 +2,13 @@ import { Facebook, Twitter, Instagram, Github } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-green-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mt-12">
-      <div className="max-w-7xl mx-auto px-6 py-12">
+    <div className="bg-gray-900 mt-12 text-white">
+      <div className="max-w-7xl mx-auto px-6 pb-12 pt-6">
         {/* Top section: 4 columns */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand / Mission */}
           <div>
-            <h2 className="text-2xl font-bold ">
+            <h2 className="text-2xl font-bold flex gap-2">
               <span role="img" aria-label="food">
                 🍲
               </span>{" "}
@@ -183,6 +183,6 @@ export default function Footer() {
           </p>
         </div>
       </div>
-    </footer>
+    </div>
   );
 }

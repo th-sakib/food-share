@@ -8,7 +8,7 @@ const BannerText = () => {
       <div className="self-center space-y-2 lg:space-y-3">
         <h1 className="text-2xl md:text-4xl xl:text-5xl font-bold leading-11">
           Share Food. Build Community.{" "}
-          <span className="text-orange-400">Reduce Waste.</span>
+          <span className="text-green-700">Reduce Waste.</span>
         </h1>
         <p className="text-xl">
           Turn surplus meals into hope. FoodShare connects people with excess
@@ -16,14 +16,18 @@ const BannerText = () => {
         </p>
       </div>
 
-      <Link to="/all-products">
-        <Button className="border-none text-base text-white mr-2 hover:cursor-pointer">
-          Donate Food
-        </Button>
-        <Button className="border-none text-base text-white hover:cursor-pointer">
-          Find Food
-        </Button>
-      </Link>
+      <div className="flex gap-2 lg:gap-4 mt-4 lg:mt-6">
+        <Link to="donate-food">
+          <Button className="border-none text-base text-white mr-2 hover:cursor-pointer">
+            Donate Food
+          </Button>
+        </Link>
+        <Link to="/find-food">
+          <Button className="border-none text-base text-white hover:cursor-pointer">
+            Find Food
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 };

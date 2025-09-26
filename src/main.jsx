@@ -4,6 +4,7 @@ import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./Routes/Routes";
 import { ToastContainer } from "react-toastify";
+import { AuthProvider } from "./context/AuthContext";
 
 function Main() {
   return (
@@ -16,8 +17,10 @@ function Main() {
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <div className={`font-josefin_sans text-primary-color `}>
-      <Main />
-      <ToastContainer />
+      <AuthProvider>
+        <Main />
+        <ToastContainer />
+      </AuthProvider>
     </div>
   </StrictMode>,
 );

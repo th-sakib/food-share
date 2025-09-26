@@ -1,14 +1,24 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../lib/firebase";
 import { toast } from "react-toastify";
+import { createUser } from "@/api/userApi";
+
+const googleProvider = new GoogleAuthProvider();
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,12 +30,22 @@ function Register() {
         password,
       );
       const user = userCredential.user;
-      console.log(user);
-      if (user) {
+
+      // body is empty because those should be created in backend from firebase data
+      const userData = await createUser(); // create user in backend
+      console.log("userData: ", userData);
+
+      if (userData) {
         setLoading(false);
+        navigate("/");
+
         toast.success("Registration successful!", {
           position: "top-center",
         });
+
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
       }
     } catch (error) {
       setLoading(false);
@@ -44,6 +64,44 @@ function Register() {
       }
     }
   };
+
+  const handleGoogleSignIn = async () => {
+    setLoadingGoogle(true);
+    try {
+      const userCredentials = await signInWithPopup(auth, googleProvider);
+      const user = userCredentials.user;
+
+      // body is empty because those should be created in backend from firebase data
+      const userData = await createUser(); // create user in backend
+      console.log("userData: ", userData);
+
+      if (userData) {
+        setLoadingGoogle(false);
+        navigate("/");
+        toast.success("Google sign-in successful!", {
+          position: "top-center",
+        });
+      }
+    } catch (error) {
+      setLoadingGoogle(false);
+      console.error("Error signing in with Google:", error);
+      toast.error("Google sign-in failed. Please try again.", {
+        position: "top-center",
+      });
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        navigate("/");
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -98,6 +156,14 @@ function Register() {
             className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition"
           >
             {loading ? "Registering..." : "Register"}
+          </button>
+          {/* Google login button */}
+
+          <button
+            onClick={handleGoogleSignIn}
+            className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition"
+          >
+            {loadingGoogle ? "Signing in..." : "Sign in with Google"}
           </button>
 
           <p className="text-center text-gray-600 text-sm">
