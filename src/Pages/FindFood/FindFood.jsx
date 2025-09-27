@@ -15,7 +15,7 @@ import {
   XCircle,
   Users,
 } from "lucide-react";
-import { getFoodDonations, requestFood } from "@/api/userApi";
+import { getFoodDonations, requestFood, getFoodRequests } from "@/api/userApi";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
 
@@ -90,7 +90,35 @@ function FindFood() {
       const data = await getFoodDonations();
       // Handle different response structures
       const donations = data.donations || data.data || data || [];
-      setFoodItems(Array.isArray(donations) ? donations : []);
+
+      // Fetch request data for each food item to get proper availability status
+      const foodsWithRequests = await Promise.all(
+        donations.map(async (food) => {
+          try {
+            // Call /api/food/:foodId/request to get request data for this food
+            const requestData = await getFoodRequests(food._id);
+
+            return {
+              ...food,
+              requests: Array.isArray(requestData)
+                ? requestData
+                : requestData.requests || [],
+            };
+          } catch (error) {
+            console.error(
+              `Error fetching requests for food ${food._id}:`,
+              error,
+            );
+            // If request fails, keep the food without request data
+            return {
+              ...food,
+              requests: [],
+            };
+          }
+        }),
+      );
+
+      setFoodItems(Array.isArray(foodsWithRequests) ? foodsWithRequests : []);
     } catch (error) {
       console.error("Error fetching food donations:", error);
       toast.error("Failed to load food donations. Please try again.");
